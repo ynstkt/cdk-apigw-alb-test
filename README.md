@@ -1,29 +1,25 @@
-# Welcome to your CDK TypeScript project
+# Internal な ALB/ECS の一部のパスだけ API Gateway で公開するCDKサンプルコード
 
-This is a blank project for CDK development with TypeScript.
+// TODO: 図にする
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+- public な API Gateway の場合
+  - API Gateway(HTTP API) -> VPC Link -> [ Internal ALB -> ECS Service ]
+  - API Gateway(REST API) -> VPC Link -> [ Internal NLB -> Internal ALB -> ECS Service ]
 
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
-
+- private な API Gateway の場合
+  - [ EC2 at private subnet -> VPC Endpoint ] -> API Gateway(REST API) -> VPC Link -> [ Internal NLB -> Internal ALB -> ECS Service ]
+  - ※ HTTP API は private にできない
 
 ## Operation Commands
 
-- プロジェクト作成（実施済）
+- CDKプロジェクト作成（実施済）
 ```bash
 mkdir apigateway-alb-test
 cd apigateway-alb-test
 cdk init app --language typescript
 ```
 
-- ECSサービス用dockerイメージ作成（本リポジトリには含まないが、備忘としてコマンドだけ記載）
+- ECSサービス用dockerイメージ作成（関連コードは本リポジトリには含まないが、備忘としてコマンドだけ記載）
 ```bash
 docker build -t json-server ./json-server
 docker run --rm -p 3000:3000 json-server
